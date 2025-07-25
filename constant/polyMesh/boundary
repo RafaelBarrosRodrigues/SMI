@@ -1,0 +1,91 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    arch        "LSB;label=32;scalar=64";
+    class       polyBoundaryMesh;
+    location    "constant/polyMesh";
+    object      boundary;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+8
+(
+    walls
+    {
+        type            symmetry;
+        inGroups        1(symmetry);
+        nFaces          13680;
+        startFace       2152558;
+    }
+    floor
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          6096;
+        startFace       2166238;
+    }
+    inlet
+    {
+        type            patch;
+        nFaces          1584;
+        startFace       2172334;
+    }
+    outlet
+    {
+        type            patch;
+        nFaces          1584;
+        startFace       2173918;
+    }
+    IEA-15-240-RWT-tower-rotated
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          2570;
+        startFace       2175502;
+    }
+    IEA-15-240-RWT-rotor-rotated
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          33541;
+        startFace       2178072;
+    }
+    AMI1
+    {
+        type            cyclicAMI;
+        inGroups        1(cyclicAMI);
+        nFaces          17518;
+        startFace       2211613;
+        matchTolerance  0.0001;
+        transform       rotational;
+        neighbourPatch  AMI2;
+        rotationAxis    (1 0 0);
+        rotationCentre  (14.0525 147.193 0);
+        AMIMethod       faceAreaWeightAMI;
+        restartUncoveredSourceFace 1;
+    }
+    AMI2
+    {
+        type            cyclicAMI;
+        inGroups        1(cyclicAMI);
+        nFaces          17758;
+        startFace       2229131;
+        matchTolerance  0.0001;
+        transform       rotational;
+        neighbourPatch  AMI1;
+        rotationAxis    (1 0 0);
+        rotationCentre  (14.0525 147.193 0);
+        AMIMethod       faceAreaWeightAMI;
+        restartUncoveredSourceFace 1;
+    }
+)
+
+// ************************************************************************* //
