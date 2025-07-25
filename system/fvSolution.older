@@ -1,0 +1,121 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+	p
+	{
+		solver          GAMG;
+        smoother        DICGaussSeidel;
+        tolerance       1e-09;
+        relTol          0.01;
+	}
+		
+		
+		pFinal
+	{
+		$p;
+		 tolerance       1e-09;
+        relTol          0;
+	}
+
+
+    pcorr
+    {
+        solver          GAMG;
+        smoother        DICGaussSeidel;
+        tolerance       1e-06;
+        relTol          0.1;
+    }
+    pcorrFinal
+    {
+        $pcorr;
+        tolerance       1e-06;
+        relTol          0;
+    }
+    "(U|k|epsilon)"
+    {
+        solver          PBiCGStab;
+		preconditioner  DILU;
+        tolerance       1e-06;
+        relTol          0.1;
+		minIter			1;
+    }
+    "(U|k|epsilon)Final"
+    {
+        $U;
+        tolerance       1e-06;
+        relTol          0;
+    }
+
+Phi
+    {
+        solver          PCG;
+        preconditioner
+        {
+            preconditioner   GAMG;
+            smoother         DICGaussSeidel;
+            nPreSweeps       0;
+            nPostSweeps      2;
+            cacheAgglomeration on;
+            agglomerator     faceAreaPair;
+            nCellsInCoarsestLevel 10;
+            mergeLevels      1;
+        }
+        tolerance       1e-09;
+        relTol          1.0e-2;
+        
+    }
+
+
+}
+
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 15;
+    PhiRefCell      0;
+    PhiRefValue     0;
+}
+
+
+PIMPLE
+{
+    correctPhi          no;
+    nOuterCorrectors    2;
+    nCorrectors         1;
+    nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p           0.4;
+    }
+    equations
+    {
+        U               0.6;
+        
+        "(k|epsilon|omega)" 0.6;
+    }
+}
+
+
+
+
+// ************************************************************************* //

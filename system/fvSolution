@@ -1,0 +1,167 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+	p
+	{
+        solver          PCG;
+        preconditioner
+        {
+            preconditioner          GAMG;
+            smoother                DIC;
+            cacheAgglomeration      true;
+            nCellsInCoarsestLevel   2300;
+            agglomerator            faceAreaPair;
+            mergeLevels             1;    
+        };
+        tolerance        1e-12;
+        relTol           1.0e-5;
+        minIter          0;
+        maxIter          1000;
+
+	}
+		
+		
+		pFinal
+	{
+		$p;
+		tolerance       1e-12;
+        relTol          0;
+	}
+
+
+    pcorr
+    {
+        solver          GAMG;
+        smoother        DICGaussSeidel;
+        tolerance       1e-06;
+        relTol          0.1;
+    }
+    pcorrFinal
+    {
+        $pcorr;
+        tolerance       1e-06;
+        relTol          0;
+    }
+    "(U|k|epsilon)"
+    {
+        solver          PBiCGStab;
+        preconditioner
+        {
+            preconditioner          GAMG;
+            smoother                DILU;
+            cacheAgglomeration      true;
+            nCellsInCoarsestLevel   2300;
+            agglomerator            faceAreaPair;
+            mergeLevels             1;    
+        }
+        tolerance       1e-10;
+        relTol          1.0e-4;
+        minIter         0;
+        maxIter         1000;
+    }
+    "(U|k|epsilon)Final"
+    {
+        $U;
+        tolerance       1e-10;
+        relTol          0;
+    }
+
+Phi
+    {
+        solver          PCG;
+        preconditioner
+        {
+            preconditioner   GAMG;
+            smoother         DICGaussSeidel;
+            nPreSweeps       0;
+            nPostSweeps      2;
+            cacheAgglomeration on;
+            agglomerator     faceAreaPair;
+            nCellsInCoarsestLevel 2300;
+            mergeLevels      1;
+        }
+        tolerance       1e-09;
+        relTol          1.0e-2;
+    }
+}
+
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 2;
+    PhiRefCell      0;
+    PhiRefValue     0;
+}
+
+
+PIMPLE
+{
+    nOuterCorrectors    50;
+    nCorrectors         1;
+    momentumPredictor yes;
+    nNonOrthogonalCorrectors 5;
+    residualControl yes;
+    consistent yes;
+    correctTurbulence yes;
+    residualControl
+    {
+        U
+        {
+            relTol          0;
+            tolerance       1e-4;
+        }
+        p
+        {
+            relTol          0;
+            tolerance       1e-5;
+        }
+        
+
+        // possibly check turbulence fields
+        "(k|epsilon|omega)"
+        {
+            relTol          0;
+            tolerance       1e-3;
+        }
+    }
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p           0.7;
+        pFinal 1.0;
+    }
+    equations
+    {
+        U               0.6;
+        
+        "(k|k|epsilon)" 0.6; // para transientes, usar pPinal = 1.0 para não afetar resultado da simulação
+        "(U|k|epsilon)Final"   1;
+    }
+}
+
+//solverInfo
+//{
+//    writeResidualFields true;
+//}
+
+
+
+// ************************************************************************* //

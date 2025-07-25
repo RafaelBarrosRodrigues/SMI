@@ -1,0 +1,36 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      mapFieldsDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+patchMap
+(
+    inlet inlet
+    outlet outlet
+    farfield farfield
+    AMI_Mobile AMI_Mobile
+    AMI_Farfield AMI_Farfield
+    walls_blades_cil walls_blades_cil  
+    walls_blades_sides walls_blades_sides
+    walls_blades_tip walls_blades_tip
+    walls_blades_trail walls_blades_trail
+    walls_nacele walls_nacele
+
+);
+
+cuttingPatches  ();
+
+
+// ************************************************************************* //

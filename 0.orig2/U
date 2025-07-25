@@ -1,0 +1,79 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (-7.4254 0 0);
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+    
+    "walls"
+    {
+        //type            freestream;
+        //freestreamValue uniform (-7.4254 0 0);
+        type            symmetry;
+    }
+    // wall_blades
+    // {
+    //     type            movingWallVelocity;
+    //     value           uniform (0 0 0);
+    // }	
+    // wall_nacele_front
+    // {
+    //     type            movingWallVelocity;
+    //     value           uniform (0 0 0);
+    // }
+    //farfield
+    //{
+    //    type            symmetry;
+    //}
+    "IEA-15-240-RWT-rotor-rotated"
+    {
+		type            movingWallVelocity;
+        value           uniform (0 0 0);
+    }
+    "(IEA-15-240-RWT-tower-rotated|floor)"
+    {
+		type            noSlip;
+    }
+    inlet
+    {
+		type            fixedValue;
+        value           uniform (-7.4254 0 0);
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+}
+
+    rotorCylinder
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          0;
+        startFace       16008093;
+    }
+    rotorCylinder_slave
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          0;
+        startFace       16008093;
+    }
+// ************************************************************************* //

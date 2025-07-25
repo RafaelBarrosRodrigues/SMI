@@ -1,0 +1,27 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+if notTest "$@"
+then
+
+    ./Allrun.pre
+
+    restore0Dir
+
+    rm log.decomposePar
+
+    runApplication decomposePar -force
+
+    #runParallel potentialFoam -writep -writephi -writePhi
+    runParallel potentialFoam -writep -writephi -writePhi
+
+    #runParallel $(getApplication)
+    runParallel $(getApplication)
+
+    runApplication reconstructPar
+
+fi
+
+#------------------------------------------------------------------------------

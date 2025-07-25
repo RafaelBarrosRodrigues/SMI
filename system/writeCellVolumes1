@@ -1,0 +1,37 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                |
+| \\      /  F ield         | cfMesh: A library for mesh generation          | 
+|  \\    /   O peration     |                                                |
+|   \\  /    A nd           | Author: Franjo Juretic                         | 
+|    \\/     M anipulation  | E-mail: franjo.juretic@c-fields.com            |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version   2.0;
+    format    ascii;
+    class     dictionary;
+    location  "system";
+    object    writeCellVolumes1;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+writeCellVolumes1
+{
+    // Mandatory entries (unmodifiable)
+    type            writeCellVolumes;
+    libs            (fieldFunctionObjects);
+
+    // Optional (inherited) entries
+    region          region1;
+    enabled         true;
+    log             true;
+    timeStart       1997;
+    //timeEnd         1000;
+    executeControl  timeStep;
+    executeInterval 1;
+    writeControl    timeStep;
+    writeInterval   1;
+}

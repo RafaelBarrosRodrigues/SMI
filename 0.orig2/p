@@ -1,0 +1,118 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    "walls"
+    {
+        // type            fixedFluxPressure;
+		// value			uniform 0;
+        //type            freestreamPressure;
+        //freestreamValue uniform 0;  // relative pressure
+        type            symmetry;
+
+    }
+    "(IEA-15-240-RWT-tower-rotated|floor)"
+    {
+		type            zeroGradient;
+    }
+    "IEA-15-240-RWT-rotor-rotated"
+    {
+		type            zeroGradient;
+    }
+    //farfield
+    //{
+    //    type            symmetry;
+    //}
+    // farfield_baixo
+    // {
+    //     type            fixedFluxPressure;
+	// 	value			uniform 0;
+    // }
+    inlet
+    {
+        type            zeroGradient;
+    }	
+    outlet
+    {
+        type            codedFixedValue;
+        value           uniform 0;  // default; will be overridden
+
+        name            pressureProfileOutlet;
+
+        code
+        #{
+            const vectorField& C = patch().Cf();  // face centers
+            Field<scalar>& gradP = *this;         // boundary field (scalar gradient)
+
+            // Heights and corresponding pressure gradients (dP/dx or dP/dy, units: Pa/m)
+            List<scalar> heights = {11.6677627321552, 34.1096436737764, 57.1344953364636, 80.7734148792206, 105.060056006832, 130.030917121662, 155.725671252986, 182.187545249955, 209.463757337668, 237.660024159084, 266.671150979978, 327.826911727176};
+            List<scalar> pressureGradients = {
+                15000,    // example values, replace with your actual gradient data
+                12500,
+                10000,
+                7500,
+                5000,
+                2500,
+                0,
+                -2500,
+                -5000,
+                -7500,
+                -10000,
+                -15000
+            };
+
+            forAll(C, i)
+            {
+                scalar y = C[i].y();  // height coordinate
+                scalar gradInterp;
+
+                if (y <= heights[0])
+                    gradInterp = pressureGradients[0];
+                else if (y >= heights[heights.size() - 1])
+                    gradInterp = pressureGradients.last();
+                else
+                {
+                    for (label j = 0; j < heights.size() - 1; ++j)
+                    {
+                        if (y >= heights[j] && y < heights[j+1])
+                        {
+                            scalar h0 = heights[j];
+                            scalar h1 = heights[j+1];
+                            scalar g0 = pressureGradients[j];
+                            scalar g1 = pressureGradients[j+1];
+
+                            scalar t = (y - h0) / (h1 - h0);
+                            gradInterp = (1 - t) * g0 + t * g1;
+                            break;
+                        }
+                    }
+                }
+
+                gradP[i] = gradInterp;
+            }
+        #};
+    }
+
+}
+
+// ************************************************************************* //

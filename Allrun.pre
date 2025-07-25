@@ -1,0 +1,35 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+# Optional: copy geometry if needed
+# cp -rf "$FOAM_TUTORIALS"/resources/geometry/propeller constant/triSurface
+
+runApplication blockMesh
+
+runApplication surfaceFeatureExtract
+
+# Decompose only the mesh (not field data)
+runApplication decomposePar -force -copyUniform -copyZero
+
+# Run snappyHexMesh in parallel
+runParallel snappyHexMesh -overwrite
+
+# Reconstruct the parallel mesh into a single mesh
+runApplication reconstructParMesh -constant
+
+# Optional: clean up fields snappy may have created
+rm -rf 0
+
+# Renumber mesh for better solver performance
+runApplication renumberMesh -overwrite
+
+# Run topoSet (if needed for cell/face zones)
+# runApplication topoSet
+
+# Create patches (e.g., AMI, inlet/outlet)
+runApplication createPatch -overwrite
+
+
+#------------------------------------------------------------------------------

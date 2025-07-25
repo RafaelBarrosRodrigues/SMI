@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+<!-- IEA-15-240-RWT-tower-rotated_IEA-15-240-RWT-tower-rotated_edgeIndex -->
+<VTKFile type='PolyData' version='0.1' byte_order='LittleEndian' header_type='UInt64'>
+  <PolyData>
+    <Piece NumberOfPoints='36'>
+      <Points>
+        <DataArray type='Float32' Name='Points' NumberOfComponents='3' format='binary'>
+sAEAAAAAAABIUDRBtAgPQ7W1C0C9MFJBKicPQwwfEEB3AE1B6AoPQ/EHDECn1ytBDDsPQzb8EkDT5BtB3BsQQ6pvM0B0X1BB9RsPQzSADkDT5BtB3BsQQ6lvM0Ah32hBlD0XQx8SFr/OoS5BHDoXQ0vlF0A4wjhBlj8XQytWIsCDYWhBsj0XQ7OyM7+7EjJB/04TQ9BDl8DADTJBT0ETQxJ4l0D4RFhBZwkTQxVOksCHU0VBqGITQxdkmUAWGENBtD8XQwriJMARR1lBRloPQ9sqHEBkG2hBA90RQ5qjecD1UUVBbG8TQ5QymcDT8y1BFSoPQ9PvFsBYYEJBmDkXQzWYJ0BuFyBBPqASQ8W/icA+IBxB3gwQQ5VaNkDG9kVB7fYOQ1JxDcD5rUJBpOsOQwGGCkDL2jlBGPIOQx9bC0Ck0l9BSrkPQ6IRKcB+eldBwT4XQwJFCcAhTy9BWDkXQ6YnGUCFtzlBRfgOQ7I+DsCykWhBSTwXQ4tTMz+g5ENBpDkXQyMwJ0BJIkNBXzoXQ7JqJ0ATuUJBcvEOQyVIDcDMqDBBpkgTQ1hylsDt2l9B8LIPQ72mJkA=
+        </DataArray>
+      </Points>
+      <PointData>
+        <DataArray type='Int32' Name='edgeIndex' format='binary'>
+kAAAAAAAAABZ6QAAHPMAACz4AABK/wAAg/8AAOATAQAAXgEA8bECAPWxAgD7sQIA/LECADGyAgBLsgIAkLICAPCyAgAjswIAObMCAEazAgBKswIAUrMCAKOzAgC1swIAvLMCAMuzAgDQswIA07MCAOKzAgD9swIAULQCAGm0AgCVtAIA5LQCAOW0AgD8tAIAL7UCADy1AgA=
+        </DataArray>
+      </PointData>
+    </Piece>
+  </PolyData>
+</VTKFile>

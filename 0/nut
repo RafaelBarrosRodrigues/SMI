@@ -1,0 +1,60 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      nut;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -1 0 0 0 0];
+
+internalField   uniform 53.5;
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    "walls"
+    {
+        //type            freestream;
+        //freestreamValue uniform 80.54;   // Your incoming wind
+        type            symmetry;
+		//type            nutkWallFunction;
+        //value           uniform 0;
+    }
+
+    "(IEA-15-240-RWT-tower-rotated|floor)"
+    {
+		type            nutkWallFunction;
+        value           $internalField;
+    }
+    "IEA-15-240-RWT-rotor-rotated"
+    {
+		type            nutkWallFunction;
+        value           $internalField;
+    }
+    //farfield
+    //{
+    //    type            symmetry;
+    //}
+    inlet
+    {
+        type            calculated;
+        value           $internalField;	
+    }	
+    outlet
+    {
+        type            calculated;
+        value           $internalField;	
+    }	
+}
+
+// ************************************************************************* //

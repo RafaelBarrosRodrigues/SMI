@@ -1,0 +1,123 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (-7.4254 0 0);
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+    
+    "walls"
+    {
+        //type            freestream;
+        //freestreamValue uniform (-7.4254 0 0);
+        type            symmetry;
+    }
+    // wall_blades
+    // {
+    //     type            movingWallVelocity;
+    //     value           uniform (0 0 0);
+    // }	
+    // wall_nacele_front
+    // {
+    //     type            movingWallVelocity;
+    //     value           uniform (0 0 0);
+    // }
+    //farfield
+    //{
+    //    type            symmetry;
+    //}
+    "IEA-15-240-RWT-rotor-rotated"
+    {
+		type            movingWallVelocity;
+        value           uniform (0 0 0);
+    }
+    "(IEA-15-240-RWT-tower-rotated|floor)"
+    {
+		type            noSlip;
+    }
+    inlet
+    {
+        type            codedFixedValue;
+        value           uniform (0 0 0);  // default; will be overridden
+
+        name            windProfileInlet;
+
+        code
+        #{
+            const vectorField& C = patch().Cf();  // face centers
+            Field<vector>& field = *this;         // boundary field
+
+            // Height (Y-axis) and corresponding velocities
+            List<scalar> heights = {11.6677627321552, 34.1096436737764, 57.1344953364636, 80.7734148792206, 105.060056006832, 130.030917121662, 155.725671252986, 182.187545249955, 209.463757337668, 237.660024159084, 266.671150979978, 327.826911727176};
+            List<vector> velocities = {
+                vector(-8.5508, 0, 0),
+                vector(-9.7425, 0, 0),
+                vector(-9.7128, 0, 0),
+                vector(-9.2170, 0, 0),
+                vector(-8.5722, 0, 0),
+                vector(-7.7960, 0, 0),
+                vector(-7.0345, 0, 0),
+                vector(-6.3563, 0, 0),
+                vector(-5.8899, 0, 0),
+                vector(-5.5846, 0, 0),
+                vector(-5.3834, 0, 0),
+                vector(-5.2650, 0, 0)
+            };
+
+            forAll(C, i)
+            {
+                scalar y = C[i].y();  // get height from Y coordinate
+                vector U_interp;
+
+                if (y <= heights[0])
+                    U_interp = velocities[0];
+                else if (y >= heights[heights.size() - 1])
+                    U_interp = velocities.last();
+                else
+                {
+                    for (label j = 0; j < heights.size() - 1; ++j)
+                    {
+                        if (y >= heights[j] && y < heights[j+1])
+                        {
+                            scalar h0 = heights[j];
+                            scalar h1 = heights[j+1];
+                            vector U0 = velocities[j];
+                            vector U1 = velocities[j+1];
+
+                            scalar t = (y - h0) / (h1 - h0);
+                            U_interp = (1 - t) * U0 + t * U1;
+                            break;
+                        }
+                    }
+                }
+
+                field[i] = U_interp;
+            }
+        #};
+    }
+    
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform (0 0 0);
+        value           uniform (0 0 0);
+    }
+}
+
+// ************************************************************************* //
